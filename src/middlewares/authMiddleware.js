@@ -1,5 +1,7 @@
 import db from '../database/db.js'
 import signUpSchema from '../schemas/signUpSchema.js'
+import signInSchema from '../schemas/signInSchema.js';
+import bcrypt from 'bcrypt';
 
 export async function signUpValidation(req, res, next){
     const user = req.body;
@@ -33,5 +35,34 @@ export async function signUpValidation(req, res, next){
         console.log(err)
         res.status(402).send(err);
     }   
-
 }
+
+export async function signInValidation(req, res, next){
+    const user = req.body;
+    const validation = signInSchema.validate(user, {abortEarly: false});
+    if(validation.error){
+        const erros = validation.error.details.map(detail => detail);
+        res.status(422).send(erros);
+        return;
+    } 
+    try{
+       const userAready =  await db.query(`
+       SELECT * 
+       FROM users 
+       WHERE users.email = $1
+       `,
+       [user.email])
+       
+       if(userAready.rows.length > 0 && bcrypt.compareSync(user.password, userAready.rows[0].passwordHash)){
+        delete userAready.rows[0].passwordHash
+        res.locals.user = userAready.rows[0];
+        next();
+       }else{
+        res.status(401).send({message:'Email ou Senha incorreto'})
+        return;
+       }
+    }catch(err){
+        console.log(err)
+        res.status(500).send({message: 'Deu erro no Midd'})
+    }
+};

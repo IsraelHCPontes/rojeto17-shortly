@@ -7,8 +7,6 @@ export async function signUp (req, res) {
     const passwordHash =  bcrypt.hashSync(password, 10);
     
     try{                
-        
-       
         console.log(name, email, password, passwordHash)
         await  db.query(`
         INSERT INTO users (name, email, "passwordHash")
@@ -24,25 +22,34 @@ export async function signUp (req, res) {
 export  async function signIn(req, res) {
     const {user} = res.locals;
     const token = uuid();
-    const newSession = {
-        userId: user._id,
-        token:token,
-        time:Date.now()
-    }
 
-    
-    try{
-        const { db } = await connectDB();
-        
-        const sessionAlready = await  db.collection("sessions").findOne({userId: user._id});
+    console.log(user)
+    try{        
+        const sessionAlready = await  db.query(`
+        SELECT *
+        FROM sessions
+        WHERE "userId" = $1
+        `,[user.id]);
 
-        if(sessionAlready){
-            await  db.collection("sessions").deleteOne({userId: user._id});
+        if(sessionAlready.rows.length > 0){
+            await  db.query(`
+            UPDATE sessions
+            SET token = $1, "createdAt" = NOW()
+            WHERE sessions."userId" = $2
+            `,[token, user.id])
+        }else{
+            await  db.query(`
+            INSERT INTO sessions ("userId", token)
+            VALUES  ($1, $2)
+            `,[user.id, token])
         }
-        await  db.collection("sessions").insertOne(newSession);
+        
         res.status(201).send({token: token, name: user.name});
     }catch(err){
         console.log(err)
         res.status(500).send(err);
     }
 }
+
+
+
