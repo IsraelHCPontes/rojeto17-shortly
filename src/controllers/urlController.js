@@ -24,6 +24,4 @@ export async function listUrlsForId(req, res){
         console.log(error)
         res.send(error)
     }
-
-  
 }
