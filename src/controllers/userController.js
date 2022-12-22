@@ -9,13 +9,14 @@ export async function createShortly(req, res){
    
     try{
         db.query(`
-        INSERT INTO urls("shortUrl", url, "userId")
+        INSERT INTO urls("shortlyUrl", url, "userId")
         VALUES ($1, $2, $3)
         `, [shortly, url, user.id ])
 
         const body = { shortly }
 
         res.status(201).send(body)
+        
     }catch(error){
         console.log(error)
         res.status(200).send('to aqui')
