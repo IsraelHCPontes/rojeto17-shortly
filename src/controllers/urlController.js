@@ -41,7 +41,7 @@ export async function redirectToLink(req, res){
         res.sendStatus(404);
         return;
        }
-       
+
        await db.query(`
        UPDATE  urls 
        SET "visitCount" = "visitCount" + 1
@@ -53,4 +53,38 @@ export async function redirectToLink(req, res){
         console.log(error)
         res.sendStatus(500);
     }
+}
+
+export async function deleteUrlById(req, res){
+    const id = req.params.id;
+    const user = res.locals.user;
+
+    try{
+        const {rows} = await db.query(`
+        SELECT *
+        FROM urls
+        WHERE id = $1
+        `,[id])
+
+        if(!rows[0]){
+            res.sendStatus(404)
+            return;
+        }
+
+        if(rows[0].userId !== user.id){
+            res.sendStatus(401)
+            return;
+        }
+
+        await db.query(`
+        DELETE FROM urls
+        WHERE id = $1
+        `,[id])
+
+        res.sendStatus(204)
+     }catch(error){
+        console.log(error)
+        res.sendStatus(500);
+     }
+
 }
