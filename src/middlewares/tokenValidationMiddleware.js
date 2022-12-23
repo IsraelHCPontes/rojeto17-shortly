@@ -4,6 +4,12 @@ export async function tokenValidation(req, res, next){
   const {authorization} = req.headers;
   const token = authorization?.replace('Bearer ', ''); 
 
+  if(!token){
+    res.sendStatus(401) 
+    return;
+  }
+
+  console.log(req.headers)
   try{
     
     const session = await  db.query(`
@@ -19,7 +25,7 @@ export async function tokenValidation(req, res, next){
     `,[session.rows[0].userId]);
 
     if(session.rows.length <= 0 || user.rows.length <= 0){
-        res.sendStatus(401);
+        res.sendStatus(404) 
         return;
     }
    

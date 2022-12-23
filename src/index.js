@@ -4,7 +4,6 @@ import authRouter from './routes/authRouter.js';
 import userRouter from './routes/userRouter.js';
 import urlRouter from  './routes/urlRouter.js';
 
-
 const app = express();
 app.use(cors());
 app.use(express.json());
