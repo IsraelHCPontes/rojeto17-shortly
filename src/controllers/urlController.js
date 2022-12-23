@@ -88,3 +88,21 @@ export async function deleteUrlById(req, res){
      }
 
 }
+
+export async function rankingUrlsByVisit(req, res){
+
+    try{
+        const ranking =  await db.query(`
+        SELECT  users.id, users.name, COUNT(urls) AS "linksCount",  COALESCE(SUM("visitCount"), 0) AS "visitCount"
+        FROM users
+      	LEFT JOIN urls ON users.id = urls."userId"
+		GROUP BY  users.id 
+		ORDER BY   "visitCount"  DESC LIMIT 10 
+        `)
+
+        res.send(ranking.rows)
+    }catch(error){
+        console.log(error)
+        res.sendStatus(500)
+    }
+}
