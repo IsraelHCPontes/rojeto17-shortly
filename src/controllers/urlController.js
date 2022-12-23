@@ -1,11 +1,11 @@
 import db from '../database/db.js';
 
-export async function listUrlsById(req, res){
+export async function getUrlById(req, res){
     const id = req.params.id;
     
     try{
        const {rows} = await db.query(`
-        SELECT id, "shortlyUrl", url
+        SELECT id, "shortUrl", url
         FROM urls
         WHERE id = $1
         `, [id]);
@@ -34,7 +34,7 @@ export async function redirectToLink(req, res){
        const {rows} = await db.query(`
         SELECT id, url
         FROM urls
-        WHERE "shortlyUrl" = $1
+        WHERE "shortUrl" = $1
        `, [shortly]) 
 
        if(!rows[0]){

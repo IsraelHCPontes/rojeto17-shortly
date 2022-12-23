@@ -14,7 +14,7 @@ export async function signUpValidation(req, res, next){
     }
 
     if(user.password !==  user.confirmPassword){
-        res.status(409).send({message:"As senhas precisam ser iguais"})
+        res.status(422).send({message:"As senhas precisam ser iguais"})
         return;
      }
 
@@ -26,7 +26,7 @@ export async function signUpValidation(req, res, next){
         [user.email]);
 
         if(emailAlready.rows.length > 0){
-            res.status(409).send({message:"Email já existe"});
+            res.status(422).send({message:"Email já existe"});
             return;
           }
           
@@ -58,7 +58,7 @@ export async function signInValidation(req, res, next){
         res.locals.user = userAready.rows[0];
         next();
        }else{
-        res.status(401).send({message:'Email ou Senha incorreto'})
+        res.status(422).send({message:'Email ou Senha incorreto'})
         return;
        }
     }catch(err){

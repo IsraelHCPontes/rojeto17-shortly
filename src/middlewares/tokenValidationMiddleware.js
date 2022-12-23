@@ -2,14 +2,16 @@ import db from '../database/db.js'
 
 export async function tokenValidation(req, res, next){
   const {authorization} = req.headers;
-  const token = authorization?.replace('Bearer ', ''); 
+  const token = authorization?.replace("Bearer ", "").split(`"`)[3] 
+ 
 
-  if(!token){
-    res.sendStatus(401) 
+
+   if(!token){
+    res.sendStatus(422) 
     return;
   }
 
-  console.log(req.headers)
+  console.log('aseguir q veio n TOKEN =>', token)
   try{
     
     const session = await  db.query(`

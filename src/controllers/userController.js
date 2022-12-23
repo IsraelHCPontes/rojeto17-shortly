@@ -9,7 +9,7 @@ export async function createShortly(req, res){
    
     try{
         db.query(`
-        INSERT INTO urls("shortlyUrl", url, "userId")
+        INSERT INTO urls("shortUrl", url, "userId")
         VALUES ($1, $2, $3)
         `, [shortly, url, user.id ])
 
@@ -35,7 +35,7 @@ export async function listUserData(req, res){
         `, [id])
 
         const urls = await db.query(`
-            SELECT id, "shortlyUrl", url, "visitCount"
+            SELECT id, "shortUrl", url, "visitCount"
             FROM urls
             WHERE "userId"= $1
         `, [id])
