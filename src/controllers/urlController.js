@@ -47,7 +47,7 @@ export async function redirectToLink(req, res){
        SET "visitCount" = "visitCount" + 1
        WHERE id = $1
        `, [rows[0].id])
-
+       console.log(rows[0].url)
         res.redirect(rows[0].url)
     }catch(error){
         console.log(error)

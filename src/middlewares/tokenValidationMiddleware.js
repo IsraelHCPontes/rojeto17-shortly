@@ -2,7 +2,7 @@ import db from '../database/db.js'
 
 export async function tokenValidation(req, res, next){
   const {authorization} = req.headers;
-  const token = authorization?.replace("Bearer ", "").split(`"`)[3] 
+  const token = authorization?.replace("Bearer ", "")
  
 
 
